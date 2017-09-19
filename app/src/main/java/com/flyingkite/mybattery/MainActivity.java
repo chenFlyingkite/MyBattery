@@ -1,16 +1,19 @@
 package com.flyingkite.mybattery;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.flyingkite.mybattery.battery.BatteryService;
 import com.flyingkite.mybattery.lockscreen.LockAdmin;
@@ -29,11 +32,6 @@ public class MainActivity extends BaseActivity {
         initBattery();
         initScreen();
         SensorUtil.listSensors(this, Sensor.TYPE_ALL);
-    }
-
-    @Override
-    protected String[] neededPermissions() {
-        return new String[]{Manifest.permission.DISABLE_KEYGUARD};
     }
 
     private void initBattery() {
@@ -60,6 +58,17 @@ public class MainActivity extends BaseActivity {
     private void initScreen() {
         openScreen = (CheckBox) findViewById(R.id.myScreenOn);
         closeScreen = (CheckBox) findViewById(R.id.myScreenOff);
+
+        SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        int proxi = sm.getSensorList(Sensor.TYPE_PROXIMITY).size();
+
+        if (proxi == 0) {
+            findViewById(R.id.mySensorNotFound).setVisibility(View.VISIBLE);
+            openScreen.setVisibility(View.GONE);
+            closeScreen.setVisibility(View.GONE);
+            return;
+        }
+
         CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -71,7 +80,8 @@ public class MainActivity extends BaseActivity {
 
             private void showDialog() {
                 new AlertDialog.Builder(MainActivity.this)
-                        .setMessage(R.string.needDeviceAdmin)
+                        .setTitle(R.string.needDeviceAdmin)
+                        .setMessage(R.string.findInDeviceAdmin)
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -95,7 +105,7 @@ public class MainActivity extends BaseActivity {
                 ComponentName name = new ComponentName(getApplicationContext(), LockAdmin.class);
                 Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
                 intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, name);
-                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "若要解除安裝此程式，請至 設定 > 安全性 > 裝置管理員 內取消此 App 的勾選");
+                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.addExplanation));
                 startActivityForResult(intent, REQ_ADD_ADMIN);
             }
         };
@@ -110,10 +120,16 @@ public class MainActivity extends BaseActivity {
             intent.putExtra(ScreenService.EXTRA_OPEN_SCREEN, open);
             intent.putExtra(ScreenService.EXTRA_CLOSE_SCREEN, close);
             startService(intent);
+            showToast(R.string.serviceStarted);
         } else {
             Say.Log("stop Service : ScreenService");
             stopService(intent);
+            showToast(R.string.serviceStopped);
         }
+    }
+
+    private void showToast(@StringRes int sid) {
+        Toast.makeText(this, sid, Toast.LENGTH_SHORT).show();
     }
 
     @Override

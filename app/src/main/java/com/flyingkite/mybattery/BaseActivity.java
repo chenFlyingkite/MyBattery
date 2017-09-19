@@ -61,9 +61,6 @@ public abstract class BaseActivity extends Activity {
             List<String> perm = new ArrayList<>();
             String[] permissions = neededPermissions();
             perm.addAll(Arrays.asList(permissions));
-//            Collections.addAll(perm
-//                    , Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                    , Manifest.permission.RECORD_AUDIO);
             for (int i = perm.size() - 1; i >= 0; i--) {
                 if (checkSelfPermission(perm.get(i)) == PackageManager.PERMISSION_GRANTED) {
                     perm.remove(i);
@@ -94,7 +91,7 @@ public abstract class BaseActivity extends Activity {
     }
 
     protected final void LogV(String msg) {
-        Log.w(getTagName(), msg);
+        Log.v(getTagName(), msg);
     }
 
     protected final void LogE(String msg, Object... param) {

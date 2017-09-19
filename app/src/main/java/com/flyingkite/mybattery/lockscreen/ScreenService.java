@@ -31,7 +31,9 @@ public class ScreenService extends Service {
 
     private boolean enableOpen;
     private boolean enableClose;
-    private static final int sensitivity = 6;
+    // We will perform lock/unlock when proximity sensor events
+    // Receive >= [inertia] events within [time] millisecond
+    private static final int inertia = 6;
     private static final long time = 2000;
     private AtomicInteger count = new AtomicInteger(0);
     private AtomicBoolean working = new AtomicBoolean(false);
@@ -86,7 +88,6 @@ public class ScreenService extends Service {
     }
 
     private SensorEventListener seListener = new SensorEventListener() {
-
         @Override
         public void onSensorChanged(SensorEvent event) {
             Say.Log("Sensor event = %s, %s, %s, %s"
@@ -98,16 +99,18 @@ public class ScreenService extends Service {
             int n = count.incrementAndGet();
             boolean locked = keyguardMgr.inKeyguardRestrictedInputMode();
             boolean isOn = isScreenOn();
-            Say.Log("n = %s, show = %s, on = %s", n, locked, isOn);
-            if (n >= sensitivity && !working.get()) {
+            Say.Log("n = %s, locked = %s, screen on = %s", n, locked, isOn);
+            if (n >= inertia && !working.get()) {
                 if (isOn) {
                     if (enableClose) {
+                        Say.Log("lockNow");
                         working.set(true);
                         policyMgr.lockNow();
                         resendReset();
                     }
                 } else {
                     if (enableOpen) {
+                        Say.Log("wake");
                         working.set(true);
                         wake();
                         resendReset();
@@ -119,7 +122,6 @@ public class ScreenService extends Service {
                     reset.sendEmptyMessageDelayed(RESET, time);
                 }
             }
-            Say.Log("atv = %s", LockAdmin.isActive(ScreenService.this));
         }
 
         private void resendReset() {
@@ -128,7 +130,6 @@ public class ScreenService extends Service {
         }
 
         private void wake() {
-            Say.Log("wake");
             // X_X Failed
 //            Intent it = new Intent(BatteryService.this, WakeUpActivity.class);
 //            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

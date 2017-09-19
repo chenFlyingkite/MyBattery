@@ -9,13 +9,19 @@
     <string name="ok">OK</string>
     <string name="no">No</string>
 
+    <string name="serviceStarted">服務已開始</string>
+    <string name="serviceStopped">服務已結束</string>
+
     <string name="start2">[Start] [開始]</string>
 
     <string name="start">[Start]\n[開始]\n電池</string>
     <string name="stop">[Stop]\n[停止]\n電池</string>
 
+    <string name="proximityNotFound">找不到接近感應器 Proximity sensor</string>
     <string name="proximity">使用接近感應 Proximity</string>
     <string name="openScreen">[Open] [開啟] 螢幕</string>
     <string name="closeScreen">[Close] [關閉] 螢幕</string>
-    <string name="needDeviceAdmin">需要啟用裝置管理員 才能使用關閉螢幕</string>
+    <string name="addExplanation">若要解除安裝此程式，請至 設定 > 安全性 > 裝置管理員 內取消此 App 的勾選</string>
+    <string name="needDeviceAdmin">需要啟用裝置管理員 才能使用關閉螢幕的功能</string>
+    <string name="findInDeviceAdmin">您可以在 設定 > 安全性 > 裝置管理員 內找到此 App 的勾選</string>
 </resources>
