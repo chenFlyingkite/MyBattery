@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+    <!-- Customize your theme here.
+
+           parent="@android:style/Theme.Translucent"
+
+     -->
+    <style name="AppThemeNoActionBar" parent="android:Theme.Holo.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+
+    <style name="notificationButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:background">#8000</item>
+    </style>
+
+    <style name="notificationIcon">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+    </style>
+
+    <style name="baseText">
+        <item name="android:textColor">#000</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="notificationText" parent="baseText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="notifText" parent="baseText">
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="mainText" parent="notificationText">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+</resources>

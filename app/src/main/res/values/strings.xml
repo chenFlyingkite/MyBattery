@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">MyBattery</string>
+
+    <string name="notificationTitle">Time = %s</string>
+    <string name="notificationTemperature">%.1f °C</string>
+    <string name="notificationVoltage">%.1f mV</string>
+    <string name="notificationCurrent">%.1f mA</string>
+
+    <string name="ok">OK</string>
+    <string name="no">No</string>
+
+    <string name="start2">[Start] [開始]</string>
+
+    <string name="start">[Start]\n[開始]\n電池</string>
+    <string name="stop">[Stop]\n[停止]\n電池</string>
+
+    <string name="proximity">使用接近感應 Proximity</string>
+    <string name="openScreen">[Open] [開啟] 螢幕</string>
+    <string name="closeScreen">[Close] [關閉] 螢幕</string>
+    <string name="needDeviceAdmin">需要啟用裝置管理員 才能使用關閉螢幕</string>
+</resources>

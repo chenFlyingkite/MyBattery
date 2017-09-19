@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/myBattery"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/start"/>
+
+    <Button
+        android:id="@+id/myFinish"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:backgroundTint="#0f0"
+        android:text="@string/stop"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toEndOf="@id/myBattery"
+        android:layout_toStartOf="@id/myFinish">
+
+        <TextView
+            android:id="@+id/myScreenTitle"
+            style="@style/mainText"
+            android:text="@string/proximity"/>
+
+        <CheckBox
+            android:id="@+id/myScreenOn"
+            style="@style/mainText"
+            android:text="@string/openScreen"/>
+
+        <CheckBox
+            android:id="@+id/myScreenOff"
+            style="@style/mainText"
+            android:text="@string/closeScreen"/>
+    </LinearLayout>
+
+</RelativeLayout>

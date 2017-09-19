@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/notifMain"
+    android:background="#fff"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <ImageView
+        android:id="@+id/notifIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:padding="5dp"
+        android:src="@mipmap/ic_launcher"/>
+
+    <TextView
+        android:id="@+id/notifHeader"
+        tools:text="Time is"
+        android:textColor="#444"
+        android:layout_toEndOf="@id/notifIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/notifTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/notifIcon"
+        android:layout_below="@id/notifHeader"
+        style="@style/baseText"
+        android:textSize="26sp"
+        tools:text="30.0 °C"/>
+
+    <LinearLayout
+        android:layout_toEndOf="@id/notifTemperature"
+        android:layout_below="@id/notifHeader"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/notifVoltage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/notifText"
+            tools:text="4000 mV"/>
+
+        <TextView
+            android:id="@+id/notifVoltage2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/notifText"
+            android:visibility="gone"
+            tools:text="4020 mV"/>
+
+        <TextView
+            android:id="@+id/notifCurrent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/notifText"
+            tools:text="123 mA"/>
+
+        <TextView
+            android:id="@+id/notifCurrent2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone"
+            style="@style/notifText"
+            tools:text="12345 mA"/>
+    </LinearLayout>
+
+</RelativeLayout>
