@@ -9,6 +9,8 @@
     <string name="ok">OK</string>
     <string name="no">No</string>
 
+    <string name="deviceAdmin">裝置管理員</string>
+
     <string name="serviceStarted">服務已開始</string>
     <string name="serviceStopped">服務已結束</string>
 

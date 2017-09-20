@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.StringRes;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -36,6 +39,22 @@ public class MainActivity extends BaseActivity {
         initBattery();
         initScreen();
         SensorUtil.listSensors(this, Sensor.TYPE_ALL);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.my_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menuDeviceAdmin:
+                startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+                return true;
+        }
+        return false;
     }
 
     private void initBattery() {

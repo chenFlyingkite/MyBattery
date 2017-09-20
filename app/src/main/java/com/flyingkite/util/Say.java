@@ -6,7 +6,7 @@ public class Say {
     private static final String TAG = "Hi";
 
     public static void Log(String msg) {
-        Log.e(TAG, msg);
+        Log.i(TAG, msg);
     }
 
     public static void Log(String format, Object... params) {
