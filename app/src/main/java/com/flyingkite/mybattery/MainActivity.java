@@ -18,12 +18,16 @@ import android.widget.Toast;
 import com.flyingkite.mybattery.battery.BatteryService;
 import com.flyingkite.mybattery.lockscreen.LockAdmin;
 import com.flyingkite.mybattery.lockscreen.ScreenService;
+import com.flyingkite.util.FilesHelper;
 import com.flyingkite.util.Say;
+
+import java.io.File;
 
 public class MainActivity extends BaseActivity {
     private static final int REQ_ADD_ADMIN = 0xadd;
     private CheckBox openScreen;
     private CheckBox closeScreen;
+    private boolean omitCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,19 @@ public class MainActivity extends BaseActivity {
                 finish();
             }
         });
+        findViewById(R.id.stopAll).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Say.Log("stop All Service");
+                omitCheck = true;
+                openScreen.setChecked(false);
+                closeScreen.setChecked(false);
+                stopService(new Intent(MainActivity.this, BatteryService.class));
+                stopService(new Intent(MainActivity.this, ScreenService.class));
+                showToast(R.string.serviceStopped);
+                omitCheck = false;
+            }
+        });
     }
 
     private void initScreen() {
@@ -69,9 +86,14 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
+        openScreen.setChecked(hasLogCache(".opening"));
+        closeScreen.setChecked(hasLogCache(".closing"));
+
         CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (omitCheck) return;
+
                 makeScreenService(openScreen.isChecked(), closeScreen.isChecked());
                 if (closeScreen.isChecked() && !LockAdmin.isActive(MainActivity.this)) {
                     showDialog();
@@ -126,6 +148,23 @@ public class MainActivity extends BaseActivity {
             stopService(intent);
             showToast(R.string.serviceStopped);
         }
+        // Remember as file
+        logAsCacheFile(".opening", open);
+        logAsCacheFile(".closing", close);
+    }
+
+    private void logAsCacheFile(String name, boolean create) {
+        // Remember as file
+        File file = new File(getExternalCacheDir(), name);
+        if (create) {
+            FilesHelper.createNewFile(file);
+        } else {
+            FilesHelper.fullDelete(file);
+        }
+    }
+
+    private boolean hasLogCache(String name) {
+        return new File(getExternalCacheDir(), name).exists();
     }
 
     private void showToast(@StringRes int sid) {

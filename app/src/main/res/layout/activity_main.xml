@@ -54,4 +54,14 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/stopAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/myBattery"
+        android:layout_toStartOf="@id/myFinish"
+        android:textStyle="bold"
+        android:textColor="#800"
+        android:text="@string/stopAll"/>
 </RelativeLayout>

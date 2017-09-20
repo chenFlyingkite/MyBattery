@@ -16,6 +16,7 @@
 
     <string name="start">[Start]\n[開始]\n電池</string>
     <string name="stop">[Stop]\n[停止]\n電池</string>
+    <string name="stopAll">[Stop All] [全部停止]</string>
 
     <string name="proximityNotFound">找不到接近感應器 Proximity sensor</string>
     <string name="proximity">使用接近感應 Proximity</string>

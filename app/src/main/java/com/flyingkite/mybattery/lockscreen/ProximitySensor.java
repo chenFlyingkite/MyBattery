@@ -20,7 +20,8 @@ public class ProximitySensor {
 
     public void register() {
         for (int type : SENSOR_TYPES) {
-            sm.registerListener(seListener, sm.getDefaultSensor(type), SensorManager.SENSOR_DELAY_UI);
+            // Should use SensorManager.SENSOR_DELAY_UI?
+            sm.registerListener(seListener, sm.getDefaultSensor(type), SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
 
