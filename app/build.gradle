@@ -4,6 +4,14 @@ def libraryVersion = "25.0.1"
 def googlePlayVersion = "9.8.0"
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'MyAndroidKey'
+            keyPassword 'MyBattery'
+            storeFile file('D:/GitHub/MyBattery/keystores/android.jks')
+            storePassword 'MyBattery'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "26.0.0"
     defaultConfig {
@@ -17,20 +25,22 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
-
     lintOptions {
-        ignore  'ContentDescription'
+        ignore 'ContentDescription'
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:$libraryVersion"
     compile "com.android.support:design:$libraryVersion"
     compile "com.android.support:percent:$libraryVersion"
     compile "com.android.support:recyclerview-v7:$libraryVersion"
-
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
