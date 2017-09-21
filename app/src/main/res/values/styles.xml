@@ -41,7 +41,7 @@
         <item name="android:textSize">14sp</item>
     </style>
     <style name="mainText" parent="notificationText">
-        <item name="android:padding">5dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:padding">@dimen/t5dp</item>
+        <item name="android:textSize">@dimen/t20sp</item>
     </style>
 </resources>

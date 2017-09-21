@@ -42,5 +42,7 @@ dependencies {
     compile "com.android.support:design:$libraryVersion"
     compile "com.android.support:percent:$libraryVersion"
     compile "com.android.support:recyclerview-v7:$libraryVersion"
+
+    //compile 'com.github.chenFlyingkite:MyAndroid:0.0.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }

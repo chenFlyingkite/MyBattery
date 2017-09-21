@@ -19,14 +19,6 @@
             </intent-filter>
         </activity>
 
-        <!--
-                  android:taskAffinity="com.cyberlink.you.activity.LockScreenActivity"
-                  android:excludeFromRecents="true"
-            android:theme="@style/AppThemeNoActionBar"
-         -->
-        <activity android:name=".WakeUpActivity"
-                  android:theme="@android:style/Theme.NoDisplay"/>
-
         <service android:name=".battery.BatteryService"/>
         <receiver android:name=".battery.SimpleReceiver"/>
         <service android:name=".lockscreen.ScreenService"/>
