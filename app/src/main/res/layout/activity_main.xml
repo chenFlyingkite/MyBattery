@@ -1,67 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/myBattery"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="@string/start"/>
-
-    <Button
-        android:id="@+id/myFinish"
-        android:layout_alignParentEnd="true"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:backgroundTint="#0f0"
-        android:text="@string/stop"/>
-
     <LinearLayout
-        android:id="@+id/myScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_toEndOf="@id/myBattery"
-        android:layout_toStartOf="@id/myFinish">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/myScreenTitle"
-            style="@style/mainText"
-            android:text="@string/proximity"/>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <CheckBox
-            android:id="@+id/myScreenOn"
-            style="@style/mainText"
-            android:text="@string/openScreen"/>
+            <TextView
+                style="@style/mainText.header"
+                android:text="@string/battery"/>
 
-        <CheckBox
-            android:id="@+id/myScreenOff"
-            style="@style/mainText"
-            android:text="@string/closeScreen"/>
+            <ImageView
+                style="@style/mainIcon"
+                android:src="@drawable/ic_battery_charging_full_black_48dp"/>
+        </TableRow>
 
-        <TextView
-            android:id="@+id/mySensorNotFound"
-            style="@style/mainText"
-            android:textStyle="bold"
-            android:textColor="#aaa"
-            android:text="@string/proximityNotFound"
-            tools:visibility="visible"
-            android:visibility="gone"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/myFinish"
+                style="@style/grayButton.smaller"
+                android:text="@string/stopBattery"/>
+
+            <Button
+                android:id="@+id/myBattery"
+                style="@style/grayButton.smaller"
+                android:textColor="@color/textGreen"
+                android:text="@string/startBattery"/>
+        </LinearLayout>
+
+        <View style="@style/separator"/>
+
+        <LinearLayout
+            android:id="@+id/myScreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/mainText.header"
+                    android:text="@string/screen"/>
+
+                <ImageView
+                    style="@style/mainIcon"
+                    android:src="@drawable/ic_screen_lock_portrait_black_48dp"/>
+            </LinearLayout>
+
+            <TextView
+                style="@style/mainText.smaller2"
+                android:text="@string/proximityDetail"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/myScreenOn"
+                    style="@style/mainText.smaller"
+                    android:padding="0dp"
+                    android:text="@string/openScreen"/>
+
+                <CheckBox
+                    android:id="@+id/myScreenOff"
+                    style="@style/mainText.smaller"
+                    android:padding="0dp"
+                    android:text="@string/closeScreen"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/mySensorNotFound"
+                style="@style/mainText"
+                android:textStyle="bold"
+                android:textColor="#aaa"
+                android:text="@string/proximityNotFound"
+                tools:visibility="visible"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <View style="@style/separator"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/mainText.header"
+                android:text="@string/batteryScreen"/>
+
+            <ImageView
+                style="@style/mainIcon"
+                android:src="@drawable/ic_battery_charging_full_black_48dp"/>
+
+            <ImageView
+                style="@style/mainIcon"
+                android:src="@drawable/ic_screen_lock_portrait_black_48dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/stopAll"
+                style="@style/grayButton.smaller"
+                android:textStyle="bold"
+                android:textColor="@color/textRed"
+                android:text="@string/stopAll"/>
+
+            <Button
+                android:id="@+id/startAll"
+                style="@style/grayButton.smaller"
+                android:textStyle="bold"
+                android:textColor="@color/textGreen"
+                android:text="@string/startAll"/>
+        </LinearLayout>
+
+        <View style="@style/separator"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/t20dp"
+            android:gravity="center">
+
+            <TextView
+                style="@style/mainText.header"
+                android:text="@string/audioManager"/>
+
+            <ImageView
+                android:id="@+id/audioRingerIcon"
+                style="@style/mainIcon"
+                android:src="@drawable/ic_notifications_black_48dp"/>
+
+            <Button
+                android:id="@+id/audioManagerChange"
+                style="@style/grayButton.smaller"
+                android:layout_marginStart="@dimen/t20dp"
+                android:textStyle="bold"
+                android:textColor="@color/textGreen"
+                android:text="@string/change"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <LinearLayout
+                style="@style/weightOne"
+                android:orientation="vertical">
+                <TextView
+                    style="@style/mainText.smaller.table"
+                    android:background="@color/waterBlue"
+                    android:text="@string/ringerVolume"/>
+
+                <TextView
+                    android:id="@+id/audioRinger"
+                    style="@style/mainText.smaller.table"
+                    tools:text="@string/vibrate"/>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/weightOne"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/mainText.smaller.table"
+                    android:background="@color/waterBlue"
+                    android:text="@string/musicVolume"/>
+
+                <TextView
+                    android:id="@+id/audioMusic"
+                    style="@style/mainText.smaller.table"
+                    tools:text="@string/ratio"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View style="@style/separator"/>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/stopAll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/myBattery"
-        android:layout_toStartOf="@id/myFinish"
-        android:textStyle="bold"
-        android:textColor="#800"
-        android:text="@string/stopAll"/>
-</RelativeLayout>
+</ScrollView>

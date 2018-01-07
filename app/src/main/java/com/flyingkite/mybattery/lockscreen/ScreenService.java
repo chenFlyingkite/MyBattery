@@ -14,7 +14,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 
-import com.flyingkite.util.Say;
+import com.flyingkite.library.Say;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -105,7 +105,9 @@ public class ScreenService extends Service {
                     if (enableClose) {
                         Say.Log("lockNow");
                         working.set(true);
-                        policyMgr.lockNow();
+                        if (LockAdmin.isActive(ScreenService.this)) {
+                            policyMgr.lockNow();
+                        }
                         resendReset();
                     }
                 } else {

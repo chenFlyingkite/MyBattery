@@ -8,6 +8,8 @@
 
     <string name="ok">OK</string>
     <string name="no">No</string>
+    <string name="na">N/A</string>
+    <string name="change">切換</string>
 
     <string name="deviceAdmin">裝置管理員</string>
 
@@ -16,15 +18,32 @@
 
     <string name="start2">[Start] [開始]</string>
 
-    <string name="start">[Start]\n[開始]\n電池</string>
-    <string name="stop">[Stop]\n[停止]\n電池</string>
+    <!-- Battery service -->
+    <string name="battery">電池</string>
+    <string name="startBattery">[Start] [開始]</string>
+    <string name="stopBattery">[Stop] [停止]</string>
     <string name="stopAll">[Stop All] [全部停止]</string>
+    <string name="startAll">[Start All] [全部開始]</string>
 
+    <!-- Screen service -->
+    <string name="screen">螢幕</string>
     <string name="proximityNotFound">找不到接近感應器 Proximity sensor</string>
-    <string name="proximity">使用接近感應 Proximity</string>
+    <string name="proximityDetail">使用接近感應 Proximity (需同時開啟電池服務)</string>
     <string name="openScreen">[Open] [開啟] 螢幕</string>
     <string name="closeScreen">[Close] [關閉] 螢幕</string>
     <string name="addExplanation">若要解除安裝此程式，請至 設定 > 安全性 > 裝置管理員 內取消此 App 的勾選</string>
     <string name="needDeviceAdmin">需要啟用裝置管理員 才能使用關閉螢幕的功能</string>
-    <string name="findInDeviceAdmin">您可以在 設定 > 安全性 > 裝置管理員 內找到此 App 的勾選</string>
+    <string name="findInDeviceAdmin">您可以在 設定 > 安全性 > 裝置管理員 內找到此 App 的勾選\n或在右上角的  \u22EE  查看裝置管理員</string>
+
+    <!-- Battery + Screen service -->
+    <string name="batteryScreen">電池 + 螢幕</string>
+
+    <!-- Audio Manager -->
+    <string name="audioManager">音量</string>
+    <string name="musicVolume">媒體</string>
+    <string name="ringerVolume">鈴聲與通知聲</string>
+    <string name="silent">無聲</string>
+    <string name="vibrate">震動</string>
+    <string name="normal">正常</string>
+    <string name="ratio">%d / %d</string>
 </resources>

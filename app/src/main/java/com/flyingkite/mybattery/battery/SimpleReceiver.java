@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.flyingkite.util.Say;
+import com.flyingkite.library.Say;
 
 public class SimpleReceiver extends BroadcastReceiver {
     public interface Owner {

@@ -1,13 +1,12 @@
 package com.flyingkite.mybattery;
 
 import android.app.AlertDialog;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.StringRes;
@@ -16,29 +15,56 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingkite.library.Say;
 import com.flyingkite.mybattery.battery.BatteryService;
 import com.flyingkite.mybattery.lockscreen.LockAdmin;
 import com.flyingkite.mybattery.lockscreen.ScreenService;
 import com.flyingkite.util.FilesHelper;
-import com.flyingkite.util.Say;
 
 import java.io.File;
 
 public class MainActivity extends BaseActivity {
+    // static fields
     private static final int REQ_ADD_ADMIN = 0xadd;
+    private static final int AM_MUSIC = AudioManager.STREAM_MUSIC;
+
+    // Views
     private CheckBox openScreen;
     private CheckBox closeScreen;
-    private boolean omitCheck;
+    private TextView musicMode;
+    private TextView ringerMode;
+    private ImageView ringer;
+
+    // Components
+    private AudioManager audioManager;
+    private SensorManager sensorManager;
+    private boolean askingAdmin;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         initBattery();
         initScreen();
+        initAudio();
         SensorUtil.listSensors(this, Sensor.TYPE_ALL);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!LockAdmin.isActive(MainActivity.this)) {
+            closeScreen.setChecked(false);
+        }
     }
 
     @Override
@@ -62,41 +88,47 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Say.Log("start Service");
-                Intent intent = new Intent(MainActivity.this, BatteryService.class);
-                startService(intent);
-                finish();
+                makeBatteryService(true);
             }
         });
         findViewById(R.id.myFinish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Say.Log("stop Service");
-                Intent intent = new Intent(MainActivity.this, BatteryService.class);
-                stopService(intent);
-                finish();
+                makeBatteryService(false);
             }
         });
         findViewById(R.id.stopAll).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Say.Log("stop All Service");
-                omitCheck = true;
-                openScreen.setChecked(false);
                 closeScreen.setChecked(false);
-                stopService(new Intent(MainActivity.this, BatteryService.class));
-                stopService(new Intent(MainActivity.this, ScreenService.class));
-                showToast(R.string.serviceStopped);
-                omitCheck = false;
+                openScreen.setChecked(false);
+                makeBatteryService(false);
+                finish();
+            }
+        });
+
+        findViewById(R.id.startAll).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Say.Log("start All Service");
+                closeScreen.setChecked(true);
+                openScreen.setChecked(true);
+                makeBatteryService(true);
+                finish();
             }
         });
     }
 
     private void initScreen() {
-        openScreen = (CheckBox) findViewById(R.id.myScreenOn);
-        closeScreen = (CheckBox) findViewById(R.id.myScreenOff);
-
-        SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        int proxi = sm.getSensorList(Sensor.TYPE_PROXIMITY).size();
+        openScreen = findViewById(R.id.myScreenOn);
+        closeScreen = findViewById(R.id.myScreenOff);
+        final SensorManager sm = sensorManager;
+        int proxi = 0;
+        if (sm != null) {
+            proxi = sm.getSensorList(Sensor.TYPE_PROXIMITY).size();
+        }
 
         if (proxi == 0) {
             findViewById(R.id.mySensorNotFound).setVisibility(View.VISIBLE);
@@ -111,47 +143,129 @@ public class MainActivity extends BaseActivity {
         CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (omitCheck) return;
-
-                makeScreenService(openScreen.isChecked(), closeScreen.isChecked());
-                if (closeScreen.isChecked() && !LockAdmin.isActive(MainActivity.this)) {
-                    showDialog();
-                }
-            }
-
-            private void showDialog() {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.needDeviceAdmin)
-                        .setMessage(R.string.findInDeviceAdmin)
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                closeScreen.setChecked(false);
-                            }
-                        })
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                requestAdmin();
-                            }
-                        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                closeScreen.setChecked(false);
-                            }
-                        }).show();
-            }
-
-            private void requestAdmin() {
-                ComponentName name = new ComponentName(getApplicationContext(), LockAdmin.class);
-                Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, name);
-                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.addExplanation));
-                startActivityForResult(intent, REQ_ADD_ADMIN);
+                makeScreenService();
             }
         };
         openScreen.setOnCheckedChangeListener(listener);
         closeScreen.setOnCheckedChangeListener(listener);
+    }
+
+    private void initAudio() {
+        ringer = findViewById(R.id.audioRingerIcon);
+        musicMode = findViewById(R.id.audioMusic);
+        ringerMode = findViewById(R.id.audioRinger);
+        final AudioManager am = audioManager;
+
+        showAudioState();
+        findViewById(R.id.audioManagerChange).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (am == null) return;
+
+                int mode = am.getRingerMode();
+                int flag = AudioManager.FLAG_SHOW_UI
+                        | AudioManager.FLAG_PLAY_SOUND
+                        | AudioManager.FLAG_VIBRATE;
+
+                if (mode == AudioManager.RINGER_MODE_NORMAL) {
+                    am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                    // -100 = AudioManager.ADJUST_MUTE
+                    am.adjustStreamVolume(AM_MUSIC, -100, flag);
+                } else {
+                    am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    // 100 = AudioManager.ADJUST_UNMUTE
+                    am.adjustStreamVolume(AM_MUSIC, 100, flag);
+                }
+                showAudioState();
+            }
+        });
+    }
+
+    private void showAudioState() {
+        AudioManager am = audioManager;
+
+        if (am == null) {
+            musicMode.setText(R.string.na);
+            ringerMode.setText(R.string.na);
+            return;
+        }
+
+        final int[] iconIds = {R.drawable.ic_do_not_disturb_on_black_48dp
+                , R.drawable.ic_vibration_black_48dp
+                , R.drawable.ic_notifications_black_48dp
+        };
+        final String[] rings = {getString(R.string.silent), getString(R.string.vibrate), getString(R.string.normal)};
+        int mode = am.getRingerMode();
+        int vol = am.getStreamVolume(AM_MUSIC);
+        int max = am.getStreamMaxVolume(AM_MUSIC);
+        Say.Log("mode %s -> %s, music = %s / %s", mode, rings[mode], vol, max);
+
+        ringer.setImageResource(iconIds[mode]);
+        musicMode.setText(getString(R.string.ratio, vol, max));
+        ringerMode.setText(rings[mode]);
+    }
+
+    private void showDialog() {
+        if (askingAdmin) return;
+
+        askingAdmin = true;
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle(R.string.needDeviceAdmin)
+                .setMessage(R.string.findInDeviceAdmin)
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        closeScreen.setChecked(false);
+                    }
+                })
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestAdmin();
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        closeScreen.setChecked(false);
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        askingAdmin = false;
+                    }
+                })
+                .show();
+    }
+
+    private void requestAdmin() {
+        Intent intent = LockAdmin.getAddDeviceAdminIntent(MainActivity.this);
+        startActivityForResult(intent, REQ_ADD_ADMIN);
+    }
+
+    private void makeBatteryService(boolean start) {
+        Intent it = new Intent(MainActivity.this, BatteryService.class);
+        if (start) {
+            startService(it);
+        } else {
+            stopService(it);
+        }
+    }
+
+    private void checkAdmin() {
+        if (closeScreen.isChecked() && !LockAdmin.isActive(MainActivity.this)) {
+            showDialog();
+        }
+    }
+
+    private void makeScreenService() {
+        makeScreen();
+        checkAdmin();
+    }
+
+    private void makeScreen() {
+        makeScreenService(openScreen.isChecked(), closeScreen.isChecked());
     }
 
     private void makeScreenService(boolean open, boolean close) {
@@ -187,7 +301,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showToast(@StringRes int sid) {
-        Toast.makeText(this, sid, Toast.LENGTH_SHORT).show();
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(MainActivity.this, sid, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     @Override

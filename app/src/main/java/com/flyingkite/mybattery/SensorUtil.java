@@ -3,18 +3,18 @@ package com.flyingkite.mybattery;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-
-import com.flyingkite.util.Say;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SensorUtil {
+    private static final String TAG = "SensorUtil";
     private SensorUtil() {}
 
     public static void listSensors(Context context, int type) {
         if (context == null) {
-            Say.Log("Null context");
+            log("Null context");
             return;
         }
 
@@ -25,10 +25,14 @@ public class SensorUtil {
         }
 
         int n = list.size();
-        Say.Log("%s items", n);
+        log("%s items", n);
         for (int i = 0; i < n; i++) {
-            Say.Log("#%s = %s", i, list.get(i));
+            log("#%s = %s", i, list.get(i));
         }
+    }
+
+    private static void log(String format, Object... param) {
+        Log.v(TAG, String.format(format, param));
     }
 
 }

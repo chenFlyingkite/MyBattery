@@ -12,9 +12,9 @@ import android.os.Build;
 import android.os.IBinder;
 import android.widget.RemoteViews;
 
+import com.flyingkite.library.Say;
 import com.flyingkite.mybattery.MainActivity;
 import com.flyingkite.mybattery.R;
-import com.flyingkite.util.Say;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
