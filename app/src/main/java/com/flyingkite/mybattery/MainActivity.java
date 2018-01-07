@@ -105,7 +105,6 @@ public class MainActivity extends BaseActivity {
                 closeScreen.setChecked(false);
                 openScreen.setChecked(false);
                 makeBatteryService(false);
-                finish();
             }
         });
 
@@ -116,7 +115,9 @@ public class MainActivity extends BaseActivity {
                 closeScreen.setChecked(true);
                 openScreen.setChecked(true);
                 makeBatteryService(true);
-                finish();
+                if (LockAdmin.isActive(MainActivity.this)) {
+                    finish();
+                }
             }
         });
     }
