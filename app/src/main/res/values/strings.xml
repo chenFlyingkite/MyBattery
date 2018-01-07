@@ -10,13 +10,12 @@
     <string name="no">No</string>
     <string name="na">N/A</string>
     <string name="change">切換</string>
+    <string name="ratio">%d / %d</string>
 
     <string name="deviceAdmin">裝置管理員</string>
 
     <string name="serviceStarted">服務已開始</string>
     <string name="serviceStopped">服務已結束</string>
-
-    <string name="start2">[Start] [開始]</string>
 
     <!-- Battery service -->
     <string name="battery">電池</string>
@@ -45,5 +44,4 @@
     <string name="silent">無聲</string>
     <string name="vibrate">震動</string>
     <string name="normal">正常</string>
-    <string name="ratio">%d / %d</string>
 </resources>

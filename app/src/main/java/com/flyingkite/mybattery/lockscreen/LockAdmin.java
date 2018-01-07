@@ -1,6 +1,5 @@
 package com.flyingkite.mybattery.lockscreen;
 
-import android.app.AlertDialog;
 import android.app.admin.DeviceAdminReceiver;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -15,18 +14,6 @@ public class LockAdmin extends DeviceAdminReceiver {
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName name = new ComponentName(context.getApplicationContext(), LockAdmin.class);
         return dpm != null && dpm.isAdminActive(name);
-    }
-
-    public static boolean checkActive(Context context) {
-        if (isActive(context)) {
-            return true;
-        } else {
-            new AlertDialog.Builder(context)
-                    .setTitle(R.string.needDeviceAdmin)
-                    .setMessage(R.string.findInDeviceAdmin)
-                    .show();
-            return false;
-        }
     }
 
     public static Intent getAddDeviceAdminIntent(Context context) {
