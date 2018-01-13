@@ -14,7 +14,6 @@ public class SensorUtil {
 
     public static void listSensors(Context context, int type) {
         if (context == null) {
-            log("Null context");
             return;
         }
 
@@ -25,7 +24,7 @@ public class SensorUtil {
         }
 
         int n = list.size();
-        log("%s items", n);
+        log("%s sensors", n);
         for (int i = 0; i < n; i++) {
             log("#%s = %s", i, list.get(i));
         }

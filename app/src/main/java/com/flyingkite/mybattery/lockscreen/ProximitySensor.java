@@ -5,8 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.flyingkite.mybattery.SensorUtil;
-
 public class ProximitySensor {
     private static final int[] SENSOR_TYPES = {Sensor.TYPE_PROXIMITY};
     private SensorManager sm;
@@ -14,7 +12,7 @@ public class ProximitySensor {
 
     public ProximitySensor(Context context, SensorEventListener listener) {
         sm = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        SensorUtil.listSensors(context, SENSOR_TYPES[0]);
+        //SensorUtil.listSensors(context, SENSOR_TYPES[0]);
         seListener = listener;
     }
 

@@ -1,8 +1,6 @@
 package com.flyingkite.mybattery;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -14,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,13 +48,12 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         initBattery();
         initScreen();
         initAudio();
         SensorUtil.listSensors(this, Sensor.TYPE_ALL);
     }
-
 
     @Override
     protected void onResume() {
@@ -84,40 +80,30 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initBattery() {
-        findViewById(R.id.myBattery).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        findViewById(R.id.myBattery).setOnClickListener(v -> {
                 Say.Log("start Service");
                 makeBatteryService(true);
             }
+        );
+        findViewById(R.id.myFinish).setOnClickListener(v -> {
+            Say.Log("stop Service");
+            makeBatteryService(false);
         });
-        findViewById(R.id.myFinish).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Say.Log("stop Service");
-                makeBatteryService(false);
-            }
+        findViewById(R.id.stopAll).setOnClickListener(v -> {
+            Say.Log("stop All Service");
+            closeScreen.setChecked(false);
+            openScreen.setChecked(false);
+            makeBatteryService(false);
+            makeScreenService();
         });
-        findViewById(R.id.stopAll).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Say.Log("stop All Service");
-                closeScreen.setChecked(false);
-                openScreen.setChecked(false);
-                makeBatteryService(false);
-            }
-        });
-
-        findViewById(R.id.startAll).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Say.Log("start All Service");
-                closeScreen.setChecked(true);
-                openScreen.setChecked(true);
-                makeBatteryService(true);
-                if (LockAdmin.isActive(MainActivity.this)) {
-                    finish();
-                }
+        findViewById(R.id.startAll).setOnClickListener(v -> {
+            Say.Log("start All Service");
+            closeScreen.setChecked(true);
+            openScreen.setChecked(true);
+            makeBatteryService(true);
+            makeScreenService();
+            if (LockAdmin.isActive(MainActivity.this)) {
+                finish();
             }
         });
     }
@@ -141,14 +127,12 @@ public class MainActivity extends BaseActivity {
         openScreen.setChecked(hasLogCache(".opening"));
         closeScreen.setChecked(hasLogCache(".closing"));
 
-        CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                makeScreenService();
-            }
+        View.OnClickListener onClick = (v) -> {
+            makeScreenService();
         };
-        openScreen.setOnCheckedChangeListener(listener);
-        closeScreen.setOnCheckedChangeListener(listener);
+
+        openScreen.setOnClickListener(onClick);
+        closeScreen.setOnClickListener(onClick);
     }
 
     private void initAudio() {
@@ -158,27 +142,24 @@ public class MainActivity extends BaseActivity {
         final AudioManager am = audioManager;
 
         showAudioState();
-        findViewById(R.id.audioManagerChange).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (am == null) return;
+        findViewById(R.id.audioManagerChange).setOnClickListener(v -> {
+            if (am == null) return;
 
-                int mode = am.getRingerMode();
-                int flag = AudioManager.FLAG_SHOW_UI
-                        | AudioManager.FLAG_PLAY_SOUND
-                        | AudioManager.FLAG_VIBRATE;
+            int mode = am.getRingerMode();
+            int flag = AudioManager.FLAG_SHOW_UI
+                    | AudioManager.FLAG_PLAY_SOUND
+                    | AudioManager.FLAG_VIBRATE;
 
-                if (mode == AudioManager.RINGER_MODE_NORMAL) {
-                    am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                    // -100 = AudioManager.ADJUST_MUTE
-                    am.adjustStreamVolume(AM_MUSIC, -100, flag);
-                } else {
-                    am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                    // 100 = AudioManager.ADJUST_UNMUTE
-                    am.adjustStreamVolume(AM_MUSIC, 100, flag);
-                }
-                showAudioState();
+            if (mode == AudioManager.RINGER_MODE_NORMAL) {
+                am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                // -100 = AudioManager.ADJUST_MUTE
+                am.adjustStreamVolume(AM_MUSIC, -100, flag);
+            } else {
+                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                // 100 = AudioManager.ADJUST_UNMUTE
+                am.adjustStreamVolume(AM_MUSIC, 100, flag);
             }
+            showAudioState();
         });
     }
 
@@ -199,7 +180,7 @@ public class MainActivity extends BaseActivity {
         int mode = am.getRingerMode();
         int vol = am.getStreamVolume(AM_MUSIC);
         int max = am.getStreamMaxVolume(AM_MUSIC);
-        Say.Log("mode %s -> %s, music = %s / %s", mode, rings[mode], vol, max);
+        Say.Log("Audio mode %s -> %s, music = %s / %s", mode, rings[mode], vol, max);
 
         ringer.setImageResource(iconIds[mode]);
         musicMode.setText(getString(R.string.ratio, vol, max));
@@ -213,29 +194,17 @@ public class MainActivity extends BaseActivity {
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle(R.string.needDeviceAdmin)
                 .setMessage(R.string.findInDeviceAdmin)
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        closeScreen.setChecked(false);
-                    }
+                .setNegativeButton(R.string.no, (dialog, which) -> {
+                    closeScreen.setChecked(false);
                 })
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        requestAdmin();
-                    }
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    requestAdmin();
                 })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        closeScreen.setChecked(false);
-                    }
+                .setOnCancelListener(dialog -> {
+                    closeScreen.setChecked(false);
                 })
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        askingAdmin = false;
-                    }
+                .setOnDismissListener(dialog -> {
+                    askingAdmin = false;
                 })
                 .show();
     }
@@ -312,8 +281,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String[] state = {"OK", "Cancel"};
-        Say.Log("result : %s", state[resultCode + 1]);
         if (requestCode == REQ_ADD_ADMIN) {
             if (resultCode == RESULT_OK) {
                 Say.Log("Admin add");

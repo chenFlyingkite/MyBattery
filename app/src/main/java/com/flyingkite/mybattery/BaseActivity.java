@@ -1,6 +1,7 @@
 package com.flyingkite.mybattery;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class BaseActivity extends Activity {
+    private static final int REQ_PERMISSION = 1;
+    private static final String[] RESULT_STATE = {"OK", "Cancel"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,12 @@ public abstract class BaseActivity extends Activity {
         LogV("onDestroy");
     }
 
-    private static final int REQ_PERMISSION = 1;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        LogV("result : %s", RESULT_STATE[resultCode + 1]);
+    }
+
 
     protected String[] neededPermissions() {
         return new String[0];
