@@ -95,11 +95,11 @@ public class ScreenService extends BaseService {
             int n = count.incrementAndGet();
             boolean locked = keyguardMgr.inKeyguardRestrictedInputMode();
             boolean isOn = isScreenOn();
-            logE("n = %s, locked = %s, screen on = %s", n, locked, isOn);
+            logV("n = %s, locked = %s, screen on = %s", n, locked, isOn);
             if (n >= inertia && !working.get()) {
                 if (isOn) {
                     if (enableClose) {
-                        logE("lockNow");
+                        logI("lockNow");
                         working.set(true);
                         if (LockAdmin.isActive(ScreenService.this)) {
                             policyMgr.lockNow();
@@ -108,7 +108,7 @@ public class ScreenService extends BaseService {
                     }
                 } else {
                     if (enableOpen) {
-                        logE("wake");
+                        logI("wake");
                         working.set(true);
                         wake();
                         resendReset();

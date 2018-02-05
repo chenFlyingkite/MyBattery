@@ -3,8 +3,7 @@ package com.flyingkite.mybattery.battery;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
-import com.flyingkite.library.Say;
+import android.util.Log;
 
 public class SimpleReceiver extends BroadcastReceiver {
     public interface Owner {
@@ -17,8 +16,13 @@ public class SimpleReceiver extends BroadcastReceiver {
         this.owner = owner;
     }
 
-    private void log(String format, Object... param) {
-        Say.Log("RCV : " + format, param);
+
+    protected final void logI(String msg, Object... param) {
+        logI(String.format(msg, param));
+    }
+
+    protected final void logI(String msg) {
+        Log.i("Hi SRV", msg);
     }
 
     @Override

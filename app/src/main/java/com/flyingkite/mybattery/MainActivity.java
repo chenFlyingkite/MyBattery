@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.flyingkite.library.Say;
 import com.flyingkite.mybattery.battery.BatteryService;
 import com.flyingkite.mybattery.lockscreen.LockAdmin;
 import com.flyingkite.mybattery.lockscreen.ScreenService;
@@ -81,23 +80,23 @@ public class MainActivity extends BaseActivity {
 
     private void initBattery() {
         findViewById(R.id.myBattery).setOnClickListener(v -> {
-                Say.Log("start Service");
+                LogI("start Service");
                 makeBatteryService(true);
             }
         );
         findViewById(R.id.myFinish).setOnClickListener(v -> {
-            Say.Log("stop Service");
+            LogI("stop Service");
             makeBatteryService(false);
         });
         findViewById(R.id.stopAll).setOnClickListener(v -> {
-            Say.Log("stop All Service");
+            LogI("stop All Service");
             closeScreen.setChecked(false);
             openScreen.setChecked(false);
             makeBatteryService(false);
             makeScreenService();
         });
         findViewById(R.id.startAll).setOnClickListener(v -> {
-            Say.Log("start All Service");
+            LogI("start All Service");
             closeScreen.setChecked(true);
             openScreen.setChecked(true);
             makeBatteryService(true);
@@ -180,7 +179,7 @@ public class MainActivity extends BaseActivity {
         int mode = am.getRingerMode();
         int vol = am.getStreamVolume(AM_MUSIC);
         int max = am.getStreamMaxVolume(AM_MUSIC);
-        Say.Log("Audio mode %s -> %s, music = %s / %s", mode, rings[mode], vol, max);
+        LogI("Audio mode %s -> %s, music = %s / %s", mode, rings[mode], vol, max);
 
         ringer.setImageResource(iconIds[mode]);
         musicMode.setText(getString(R.string.ratio, vol, max));
@@ -241,13 +240,13 @@ public class MainActivity extends BaseActivity {
     private void makeScreenService(boolean open, boolean close) {
         Intent intent = new Intent(MainActivity.this, ScreenService.class);
         if (open || close) {
-            Say.Log("start Service : ScreenService : %s %s", Say.ox(open), Say.ox(close));
+            LogI("start Service : ScreenService : %s %s", ox(open), ox(close));
             intent.putExtra(ScreenService.EXTRA_OPEN_SCREEN, open);
             intent.putExtra(ScreenService.EXTRA_CLOSE_SCREEN, close);
             startService(intent);
             showToast(R.string.serviceStarted);
         } else {
-            Say.Log("stop Service : ScreenService");
+            LogI("stop Service : ScreenService");
             stopService(intent);
             showToast(R.string.serviceStopped);
         }
@@ -283,7 +282,7 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQ_ADD_ADMIN) {
             if (resultCode == RESULT_OK) {
-                Say.Log("Admin add");
+                LogV("Admin add");
             }
             closeScreen.setChecked(resultCode == RESULT_OK);
         }

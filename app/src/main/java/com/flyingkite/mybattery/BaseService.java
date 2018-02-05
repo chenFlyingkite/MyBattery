@@ -29,11 +29,11 @@ public abstract class BaseService extends Service {
         Log.v(getTagName(), msg);
     }
 
-    protected final void logE(String msg, Object... param) {
-        logE(String.format(msg, param));
+    protected final void logI(String msg, Object... param) {
+        logI(String.format(msg, param));
     }
 
-    protected final void logE(String msg) {
-        Log.e(getTagName(), msg);
+    protected final void logI(String msg) {
+        Log.i(getTagName(), msg);
     }
 }

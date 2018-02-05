@@ -76,7 +76,7 @@ public class BatteryService extends BaseService {
 
         int uA_now = getIntProp(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
 
-        logE("TimeTVA = ,%s,%.1f,%.1f,%.3f"
+        logI("TimeTVA = ,%s,%.1f,%.1f,%.3f"
                 , nov, tmp * 0.1F, vol * 1F, uA_now * 0.001F);
         RemoteViews myRv = new RemoteViews(getPackageName(), R.layout.view_notification);
         myRv.setTextViewText(R.id.notifHeader, getString(R.string.notificationTitle, now));

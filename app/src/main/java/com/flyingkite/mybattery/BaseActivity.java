@@ -59,6 +59,11 @@ public abstract class BaseActivity extends Activity {
         LogV("result : %s", RESULT_STATE[resultCode + 1]);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        LogV("onNewIntent(%s)", intent);
+    }
 
     protected String[] neededPermissions() {
         return new String[0];
@@ -102,11 +107,23 @@ public abstract class BaseActivity extends Activity {
         Log.v(getTagName(), msg);
     }
 
+    protected final void LogI(String msg, Object... param) {
+        LogI(String.format(msg, param));
+    }
+
+    protected final void LogI(String msg) {
+        Log.i(getTagName(), msg);
+    }
+
     protected final void LogE(String msg, Object... param) {
         LogE(String.format(msg, param));
     }
 
     protected final void LogE(String msg) {
         Log.e(getTagName(), msg);
+    }
+
+    protected final String ox(boolean b) {
+        return b ? "o" : "x";
     }
 }

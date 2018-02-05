@@ -41,12 +41,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "com.android.support:appcompat-v7:$libraryVersion"
-    compile "com.android.support:design:$libraryVersion"
-    compile "com.android.support:percent:$libraryVersion"
-    compile "com.android.support:recyclerview-v7:$libraryVersion"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:$libraryVersion"
+    implementation "com.android.support:design:$libraryVersion"
+    implementation "com.android.support:percent:$libraryVersion"
+    implementation "com.android.support:recyclerview-v7:$libraryVersion"
 
-    compile 'com.github.chenFlyingkite:MyAndroid:0.0.3'
+    //implementation 'com.github.chenFlyingkite:MyAndroid:0.0.3'
     //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
