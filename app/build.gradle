@@ -3,12 +3,18 @@ apply plugin: 'com.android.application'
 def libraryVersion = "25.0.1"
 def googlePlayVersion = "9.8.0"
 
+task MyBuildInfo {
+    ext.versionCode = 1
+    ext.versionName = "1.0.0"
+    ext.APK_NAME = "MyBattery-${versionName}.apk"
+}
+
 android {
     signingConfigs {
         config {
             keyAlias 'MyAndroidKey'
             keyPassword 'MyAndroid'
-            storeFile file('F:\\GitHub\\KeyStores\\flyingkite.jks')
+            storeFile file('../KeyStores/chenflyingkite.jks')
             storePassword 'MyAndroid'
         }
     }
@@ -18,8 +24,8 @@ android {
         applicationId "com.flyingkite.mybattery"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode MyBuildInfo.versionCode
+        versionName MyBuildInfo.versionName
     }
     buildTypes {
         release {
@@ -28,6 +34,7 @@ android {
             signingConfig signingConfigs.config
         }
         debug {
+            applicationIdSuffix ".debug"
             signingConfig signingConfigs.config
         }
     }
@@ -38,6 +45,8 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    project.gradle.addListener(new TaskTicTac())
 }
 
 dependencies {
@@ -50,3 +59,72 @@ dependencies {
     //implementation 'com.github.chenFlyingkite:MyAndroid:0.0.3'
     //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
+
+
+android.applicationVariants.all { variant ->
+    def buildType = variant.buildType.name
+
+    println "[applicationVariants.all] ${variant.name}"
+    if (buildType == "release") {
+        variant.assemble.doLast {
+            variant.outputs.each { output ->
+                println "[assemble.doLast] copy" +
+                    "\n    from(${output.outputFile})" +
+                    "\n    into(${rootDir}/apks-${buildType})" +
+                    "\n    rename(${MyBuildInfo.APK_NAME})"
+                copy {
+                    from output.outputFile
+                    into "${rootDir}/apks-${buildType}"
+                    rename '(.*)', MyBuildInfo.APK_NAME
+                }
+            }
+//            if (variant.getBuildType().isMinifyEnabled()) {
+//                println "[assemble.doLast] copy from(${variant.mappingFile}) into(${buildType}) rename(${makeInfo.MAPPING})"
+//                copy {
+//                    from variant.mappingFile
+//                    into "${rootDir}/${buildType}"
+//                    rename '(.*)', makeInfo.MAPPING
+//                }
+//            }
+        }
+    }
+}
+
+
+// BuildAdapter is simple listener for BuildListener
+// TaskExecutionAdapter is simple listener for TaskExecutionListener
+class TaskTicTac extends BuildAdapter implements TaskExecutionListener {
+    private org.gradle.internal.time.Clock clock = new org.gradle.internal.time.Clock()
+    private times = []
+    private everSlow = false
+    private final SLOW = 3000
+
+    @Override
+    void beforeExecute(Task task) {
+        clock.reset()
+    }
+
+    @Override
+    void afterExecute(Task task, TaskState taskState) {
+        def ms = clock.getElapsedMillis()
+        if (!everSlow) {
+            everSlow = ms >= SLOW
+        }
+        times.add([ms, task.path])
+    }
+
+    @Override
+    void buildFinished(BuildResult result) {
+        if (!everSlow) return
+
+        printf "---- TaskTicTac ---- (All %s tasks)\n", times.size()
+        printf "Tasks spend time >= %s ms:\n", SLOW
+        for (time in times) {
+            if (time[0] >= SLOW) {
+                printf "%10.03f s  %s\n", time[0] * 0.001, time[1]
+            }
+        }
+        println "--------"
+    }
+}
+
