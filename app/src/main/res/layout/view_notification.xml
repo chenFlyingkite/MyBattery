@@ -14,7 +14,7 @@
         android:layout_height="50dp"
         android:layout_centerVertical="true"
         android:padding="5dp"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/icon_app"/>
 
     <TextView
         android:id="@+id/notifHeader"
