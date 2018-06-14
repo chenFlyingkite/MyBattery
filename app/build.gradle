@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-def libraryVersion = "25.0.1"
+def libraryVersion = "27.1.1"
 def googlePlayVersion = "9.8.0"
 
 task MyBuildInfo {
@@ -14,16 +14,16 @@ android {
         config {
             keyAlias 'MyAndroidKey'
             keyPassword 'MyAndroid'
-            storeFile file('../KeyStores/chenflyingkite.jks')
+            storeFile file('../../KeyStores/chenflyingkite.jks')
             storePassword 'MyAndroid'
         }
     }
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.flyingkite.mybattery"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode MyBuildInfo.versionCode
         versionName MyBuildInfo.versionName
     }
@@ -63,11 +63,12 @@ dependencies {
 
 android.applicationVariants.all { variant ->
     def buildType = variant.buildType.name
-
-    println "[applicationVariants.all] ${variant.name}"
+    variant.assemble.doFirst {
+        println "[applicationVariants.all] ${variant.name}"
+    }
     if (buildType == "release") {
         variant.assemble.doLast {
-            variant.outputs.each { output ->
+            variant.outputs.all { output ->
                 println "[assemble.doLast] copy" +
                     "\n    from(${output.outputFile})" +
                     "\n    into(${rootDir}/apks-${buildType})" +
@@ -94,19 +95,19 @@ android.applicationVariants.all { variant ->
 // BuildAdapter is simple listener for BuildListener
 // TaskExecutionAdapter is simple listener for TaskExecutionListener
 class TaskTicTac extends BuildAdapter implements TaskExecutionListener {
-    private org.gradle.internal.time.Clock clock = new org.gradle.internal.time.Clock()
+    private TicTac clock = new TicTac()
     private times = []
     private everSlow = false
     private final SLOW = 3000
 
     @Override
     void beforeExecute(Task task) {
-        clock.reset()
+        clock.tic()
     }
 
     @Override
     void afterExecute(Task task, TaskState taskState) {
-        def ms = clock.getElapsedMillis()
+        long ms = clock.tacL()
         if (!everSlow) {
             everSlow = ms >= SLOW
         }
@@ -128,3 +129,55 @@ class TaskTicTac extends BuildAdapter implements TaskExecutionListener {
     }
 }
 
+
+class TicTac {
+    private Stack<Long> tictac = new Stack<>()
+
+    void reset() {
+        tictac.clear()
+    }
+
+    long tic() {
+        long tic = System.currentTimeMillis()
+        tictac.push(tic)
+        return tic
+    }
+
+    long tacL() {
+        long tac = System.currentTimeMillis()
+        if (tictac.size() < 1) {
+            logError(tac, "")
+            return -1
+        } else {
+            long tic = tictac.pop()
+            return tac - tic
+        }
+    }
+
+    void tac() {
+        long tac = System.currentTimeMillis()
+
+        if (tictac.size() < 1) {
+            logError(tac, msg)
+        } else {
+            long tic = tictac.pop()
+            StringBuilder s = new StringBuilder()
+            int n = tictac.size()
+
+            for(int i = 0; i < n; ++i) {
+                s.append(" ")
+            }
+
+            s.append("[").append(tac - tic).append("] : ").append(msg)
+            logTac(s.toString())
+        }
+    }
+
+    void logTac(String s) {
+        printf "Hi, $s\n"
+    }
+
+    void logError(long tac, String msg) {
+        printf "Hi, X_X [tic = N/A, tac = $tac] : $msg\n"
+    }
+}
