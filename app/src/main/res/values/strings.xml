@@ -23,6 +23,7 @@
     <string name="stopBattery">[Stop] [停止]</string>
     <string name="stopAll">[Stop All] [全部停止]</string>
     <string name="startAll">[Start All] [全部開始]</string>
+    <string name="batteryDescription">顯示電池狀態 與 使用接近感應以關閉螢幕</string>
 
     <!-- Screen service -->
     <string name="screen">螢幕</string>

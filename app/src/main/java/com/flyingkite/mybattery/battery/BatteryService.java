@@ -1,6 +1,7 @@
 package com.flyingkite.mybattery.battery;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
 import com.flyingkite.mybattery.BaseService;
@@ -20,9 +22,12 @@ import java.util.Date;
 import java.util.Locale;
 
 public class BatteryService extends BaseService {
+    private static final String CHANNEL_ID = "com.flyingkite.mybattery.battery.BatteryService";
+    private static final String CHANNEL_NAME = "BatteryService";
     private static final int NOTIF_ID = 1;
     private SimpleReceiver receiver;
-    private BatteryManager btMgr;
+    private BatteryManager batteryMgr;
+    private NotificationManager notifyMgr;
 
     private static final SimpleDateFormat display = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.US);
     private static final SimpleDateFormat logging = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS", Locale.US);
@@ -30,6 +35,8 @@ public class BatteryService extends BaseService {
     @Override
     public void onCreate() {
         super.onCreate();
+        initSystemServices();
+        createNotificationChannel();
 
         startForeground(NOTIF_ID, createNotification(null));
 
@@ -38,6 +45,21 @@ public class BatteryService extends BaseService {
 
         IntentFilter battery = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         registerReceiver(receiver, battery);
+    }
+
+    private void initSystemServices() {
+        notifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (aboveLollipop()) {
+            batteryMgr = (BatteryManager) getSystemService(Context.BATTERY_SERVICE);
+        }
+    }
+
+    private boolean aboveLollipop() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    private boolean aboveOreo() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
     @Override
@@ -53,17 +75,12 @@ public class BatteryService extends BaseService {
         }
     }
 
-    private int getIntProp(int id) {
-        int x = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (btMgr == null) {
-                btMgr = (BatteryManager) getSystemService(Context.BATTERY_SERVICE);
-            }
-            if (btMgr != null) {
-                x = btMgr.getIntProperty(id);
-            }
+    private int getCurrentNow() {
+        if (aboveLollipop() && batteryMgr != null) {
+            return batteryMgr.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+        } else {
+            return 0;
         }
-        return x;
     }
 
     private Notification createNotification(Intent intent) {
@@ -74,31 +91,44 @@ public class BatteryService extends BaseService {
         int vol = getInt(intent, BatteryManager.EXTRA_VOLTAGE, 0);
         //int icon = getInt(intent, BatteryManager.EXTRA_ICON_SMALL, R.mipmap.ic_launcher);
 
-        int uA_now = getIntProp(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+        int uA_now = getCurrentNow();
 
         logI("TimeTVA = ,%s,%.1f,%.1f,%.3f"
                 , nov, tmp * 0.1F, vol * 1F, uA_now * 0.001F);
-        RemoteViews myRv = new RemoteViews(getPackageName(), R.layout.view_notification);
-        myRv.setTextViewText(R.id.notifHeader, getString(R.string.notificationTitle, now));
-        //myRv.setImageViewResource(R.id.notifIcon, icon);
-        myRv.setOnClickPendingIntent(R.id.notifMain, getSetIntent());
-        myRv.setTextViewText(R.id.notifTemperature, getString(R.string.notificationTemperature, tmp * 0.1F));
-        myRv.setTextViewText(R.id.notifVoltage, getString(R.string.notificationVoltage, vol * 1F));
-        myRv.setTextViewText(R.id.notifCurrent, getString(R.string.notificationCurrent, uA_now * 0.001F));
+        RemoteViews rv = new RemoteViews(getPackageName(), R.layout.view_notification);
+        rv.setTextViewText(R.id.notifHeader, getString(R.string.notificationTitle, now));
+        //rv.setImageViewResource(R.id.notifIcon, icon);
+        rv.setOnClickPendingIntent(R.id.notifMain, getSetIntent());
+        rv.setTextViewText(R.id.notifTemperature, getString(R.string.notificationTemperature, tmp * 0.1F));
+        rv.setTextViewText(R.id.notifVoltage, getString(R.string.notificationVoltage, vol * 1F));
+        rv.setTextViewText(R.id.notifCurrent, getString(R.string.notificationCurrent, uA_now * 0.001F));
 
-        return new Notification.Builder(this)
+
+        return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_thumb_up_white_48dp)
                 //.setSmallIcon(R.mipmap.ic_launcher)
-                .setContent(myRv).build();
+                .setContent(rv).build();
+    }
+
+    // https://developer.android.com/training/notify-user/build-notification
+    private void createNotificationChannel() {
+        if (aboveOreo()) {
+            NotificationChannel c = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
+            c.enableLights(false);
+            //c.setLightColor(Color.BLUE);
+            c.setDescription(getString(R.string.batteryDescription));
+            c.enableVibration(false);
+            c.setShowBadge(false);
+
+            notifyMgr.createNotificationChannel(c);
+            logI("Channel = %s", c);
+        }
     }
 
     private SimpleReceiver.Owner owner = (context, intent) -> {
         Notification b = createNotification(intent);
 
-        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (nm != null) {
-            nm.notify(NOTIF_ID, b);
-        }
+        notifyMgr.notify(NOTIF_ID, b);
     };
 
     private PendingIntent getSetIntent() {

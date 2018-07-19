@@ -38,7 +38,7 @@
     </style>
 
     <style name="notifText" parent="baseText">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">14dp</item>
     </style>
     <style name="mainText" parent="notificationText">
         <item name="android:layout_width">wrap_content</item>

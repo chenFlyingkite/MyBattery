@@ -7,6 +7,10 @@
     android:background="#fff"
     android:layout_width="match_parent"
     android:layout_height="50dp">
+    <!--
+    https://developer.android.com/guide/topics/ui/notifiers/notifications#Templates
+    No higher than 64 dp
+     -->
 
     <ImageView
         android:id="@+id/notifIcon"
@@ -18,12 +22,12 @@
 
     <TextView
         android:id="@+id/notifHeader"
-        tools:text="Time is"
+        tools:text="Time = 2018-01-23 01:23:45.678"
         android:textColor="#444"
         android:layout_toEndOf="@id/notifIcon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"/>
+        android:textSize="14dp"/>
 
     <TextView
         android:id="@+id/notifTemperature"
@@ -32,7 +36,7 @@
         android:layout_toEndOf="@id/notifIcon"
         android:layout_below="@id/notifHeader"
         style="@style/baseText"
-        android:textSize="26sp"
+        android:textSize="26dp"
         tools:text="30.0 °C"/>
 
     <LinearLayout
