@@ -67,21 +67,85 @@
                 android:text="@string/proximityDetail"/>
 
             <LinearLayout
+                android:id="@+id/myScreenPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <CheckBox
-                    android:id="@+id/myScreenOn"
-                    style="@style/mainText.smaller"
-                    android:padding="0dp"
-                    android:text="@string/openScreen"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                <CheckBox
-                    android:id="@+id/myScreenOff"
-                    style="@style/mainText.smaller"
-                    android:padding="0dp"
-                    android:text="@string/closeScreen"/>
+                    <CheckBox
+                        android:id="@+id/myScreenOn"
+                        style="@style/mainText.smaller"
+                        android:padding="0dp"
+                        android:text="@string/openScreen"/>
+
+                    <CheckBox
+                        android:id="@+id/myScreenOff"
+                        style="@style/mainText.smaller"
+                        android:padding="0dp"
+                        android:text="@string/closeScreen"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/t10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        style="@style/takeFocus">
+
+                        <TextView
+                            style="@style/baseText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/time"/>
+
+                        <EditText
+                            android:id="@+id/paramTime"
+                            style="@style/mainText"
+                            android:inputType="number"
+                            android:text="1000"
+                            android:hint="@string/time"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/baseText"
+                            android:text="@string/inertia"/>
+
+                        <EditText
+                            android:id="@+id/paramInertia"
+                            style="@style/mainText"
+                            android:inputType="number"
+                            android:text="6"
+                            android:hint="@string/inertia"/>
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/screenApply"
+                        style="@style/grayButton.smaller"
+                        android:layout_weight="0"
+                        android:padding="@dimen/t10dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textGreen"
+                        android:text="@string/apply"/>
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
@@ -92,6 +156,7 @@
                 android:text="@string/proximityNotFound"
                 tools:visibility="visible"
                 android:visibility="gone"/>
+
         </LinearLayout>
 
         <View style="@style/separator"/>

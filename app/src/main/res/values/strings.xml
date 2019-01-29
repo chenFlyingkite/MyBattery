@@ -10,6 +10,7 @@
     <string name="no">No</string>
     <string name="na">N/A</string>
     <string name="change">切換</string>
+    <string name="apply">套用</string>
     <string name="ratio">%d / %d</string>
 
     <string name="deviceAdmin">裝置管理員</string>
@@ -45,4 +46,8 @@
     <string name="silent">無聲</string>
     <string name="vibrate">震動</string>
     <string name="normal">正常</string>
+
+    <!-- Screen lock parameters -->
+    <string name="time">時間 (ms)</string>
+    <string name="inertia">變換次數</string>
 </resources>

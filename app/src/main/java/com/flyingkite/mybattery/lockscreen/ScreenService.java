@@ -20,8 +20,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ScreenService extends BaseService {
+    public static final String EXTRA_PARAM_TIME = "EXTRA_PARAM_TIME";
     public static final String EXTRA_OPEN_SCREEN = "EXTRA_OPEN_SCREEN";
     public static final String EXTRA_CLOSE_SCREEN = "EXTRA_CLOSE_SCREEN";
+    public static final String EXTRA_PARAM_INERTIA = "EXTRA_PARAM_INERTIA";
     private ProximitySensor proximity;
     private PowerManager powerMgr;
     private KeyguardManager keyguardMgr;
@@ -31,8 +33,11 @@ public class ScreenService extends BaseService {
     private boolean enableClose;
     // We will perform lock/unlock when proximity sensor events
     // Receive >= [inertia] events within [time] millisecond
-    private static final int inertia = 6;
-    private static final long time = 1000;
+    // Parameters
+    private static final int _inertia = 6;
+    private static final int _time = 1000;
+    private static int inertia;
+    private static long time;
     private final AtomicInteger count = new AtomicInteger(0);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final ResetHandler reset = new ResetHandler();
@@ -58,8 +63,13 @@ public class ScreenService extends BaseService {
         if (intent != null) {
             enableOpen = intent.getBooleanExtra(EXTRA_OPEN_SCREEN, false);
             enableClose = intent.getBooleanExtra(EXTRA_CLOSE_SCREEN, false);
+            int in = intent.getIntExtra(EXTRA_PARAM_INERTIA, _inertia);
+            int ti = intent.getIntExtra(EXTRA_PARAM_TIME, _time);
+            inertia = in > 0 ? in : _inertia;
+            time = ti > 0 ? ti : _time;
         }
         logV("onStartCommand, open = %s, close = %s", enableOpen, enableClose);
+        logV("inertia = %s, time = %s", inertia, time);
         // If we get killed, after returning from here, NO NEED restart
         return START_NOT_STICKY;
     }
@@ -146,7 +156,7 @@ public class ScreenService extends BaseService {
             //km.newKeyguardLock("tag").disableKeyguard();
 
             int flag = PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP;
-            PowerManager.WakeLock wl = powerMgr.newWakeLock(flag, "tag");
+            PowerManager.WakeLock wl = powerMgr.newWakeLock(flag, "screen:lock");
             wl.acquire(100);
         }
 

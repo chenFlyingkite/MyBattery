@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
-def libraryVersion = "27.1.1"
+def libraryVersion = "28.0.0"
 def googlePlayVersion = "9.8.0"
 
 task MyBuildInfo {
-    ext.versionCode = 4
-    ext.versionName = "1.0.0.4"
+    ext.versionCode = 5
+    ext.versionName = "1.0.0.5"
     ext.APK_NAME = "MyBattery-${versionName}.apk"
 }
 
@@ -18,12 +18,12 @@ android {
             storePassword 'MyAndroid'
         }
     }
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.flyingkite.mybattery"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode MyBuildInfo.versionCode
         versionName MyBuildInfo.versionName
     }

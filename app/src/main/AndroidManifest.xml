@@ -5,6 +5,7 @@
     package="com.flyingkite.mybattery">
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:icon="@mipmap/icon_app"

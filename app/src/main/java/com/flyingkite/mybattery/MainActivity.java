@@ -118,8 +118,7 @@ public class MainActivity extends BaseActivity {
 
         if (proxi == 0) {
             findViewById(R.id.mySensorNotFound).setVisibility(View.VISIBLE);
-            openScreen.setVisibility(View.GONE);
-            closeScreen.setVisibility(View.GONE);
+            findViewById(R.id.myScreenPanel).setVisibility(View.GONE);
             return;
         }
 
@@ -132,6 +131,7 @@ public class MainActivity extends BaseActivity {
 
         openScreen.setOnClickListener(onClick);
         closeScreen.setOnClickListener(onClick);
+        findViewById(R.id.screenApply).setOnClickListener(onClick);
     }
 
     private void initAudio() {
@@ -229,8 +229,21 @@ public class MainActivity extends BaseActivity {
     }
 
     private void makeScreenService() {
+        parseParam();
         makeScreen();
         checkAdmin();
+    }
+
+    private int inertia;
+    private int time;
+
+    private void parseParam() {
+        time = parse(findViewById(R.id.paramTime));
+        inertia = parse(findViewById(R.id.paramInertia));
+    }
+
+    private int parse(TextView t) {
+        return Integer.parseInt(t.getText().toString());
     }
 
     private void makeScreen() {
@@ -238,16 +251,18 @@ public class MainActivity extends BaseActivity {
     }
 
     private void makeScreenService(boolean open, boolean close) {
-        Intent intent = new Intent(MainActivity.this, ScreenService.class);
+        Intent it = new Intent(MainActivity.this, ScreenService.class);
         if (open || close) {
             LogI("start Service : ScreenService : %s %s", ox(open), ox(close));
-            intent.putExtra(ScreenService.EXTRA_OPEN_SCREEN, open);
-            intent.putExtra(ScreenService.EXTRA_CLOSE_SCREEN, close);
-            startService(intent);
+            it.putExtra(ScreenService.EXTRA_OPEN_SCREEN, open);
+            it.putExtra(ScreenService.EXTRA_CLOSE_SCREEN, close);
+            it.putExtra(ScreenService.EXTRA_PARAM_TIME, time);
+            it.putExtra(ScreenService.EXTRA_PARAM_INERTIA, inertia);
+            startService(it);
             showToast(R.string.serviceStarted);
         } else {
             LogI("stop Service : ScreenService");
-            stopService(intent);
+            stopService(it);
             showToast(R.string.serviceStopped);
         }
         // Remember as file
