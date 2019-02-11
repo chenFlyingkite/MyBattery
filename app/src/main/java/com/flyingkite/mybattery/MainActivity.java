@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.StringRes;
@@ -60,6 +61,7 @@ public class MainActivity extends BaseActivity {
         if (!LockAdmin.isActive(MainActivity.this)) {
             closeScreen.setChecked(false);
         }
+        showAudioState();
     }
 
     @Override
@@ -144,20 +146,35 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.audioManagerChange).setOnClickListener(v -> {
             if (am == null) return;
 
-            int mode = am.getRingerMode();
-            int flag = AudioManager.FLAG_SHOW_UI
+            final int mode = am.getRingerMode();
+            final int flag = AudioManager.FLAG_SHOW_UI
                     | AudioManager.FLAG_PLAY_SOUND
                     | AudioManager.FLAG_VIBRATE;
 
+            int nextMode = mode;
+            // -100 = AudioManager.ADJUST_MUTE
+            // 0 = AudioManager.ADJUST_SAME
+            // 100 = AudioManager.ADJUST_UNMUTE
+            int direction = 0;
+
             if (mode == AudioManager.RINGER_MODE_NORMAL) {
-                am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                // -100 = AudioManager.ADJUST_MUTE
-                am.adjustStreamVolume(AM_MUSIC, -100, flag);
+                nextMode = AudioManager.RINGER_MODE_VIBRATE;
+                direction = -100;
             } else {
-                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                // 100 = AudioManager.ADJUST_UNMUTE
-                am.adjustStreamVolume(AM_MUSIC, 100, flag);
+                nextMode = AudioManager.RINGER_MODE_NORMAL;
+                if (mode == AudioManager.RINGER_MODE_SILENT) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        // From N onward, ringer mode adjustments that would toggle Do Not Disturb are not allowed
+                        // unless the app has been granted Do Not Disturb Access.
+                        // See AudioManager#setRingerMode()
+                        nextMode = mode;
+                    }
+                }
             }
+
+            am.setRingerMode(nextMode);
+            am.adjustStreamVolume(AM_MUSIC, direction, flag);
+
             showAudioState();
         });
     }

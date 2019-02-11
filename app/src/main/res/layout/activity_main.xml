@@ -93,7 +93,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/t10dp"
+                    android:paddingTop="@dimen/t5dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -201,10 +201,9 @@
         <View style="@style/separator"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="@dimen/t20dp"
             android:gravity="center">
 
             <TextView
@@ -219,7 +218,8 @@
             <Button
                 android:id="@+id/audioManagerChange"
                 style="@style/grayButton.smaller"
-                android:layout_marginStart="@dimen/t20dp"
+                android:layout_marginStart="@dimen/t5dp"
+                android:layout_width="@dimen/t200dp"
                 android:textStyle="bold"
                 android:textColor="@color/textGreen"
                 android:text="@string/change"/>
