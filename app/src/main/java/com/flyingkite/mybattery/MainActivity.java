@@ -194,6 +194,7 @@ public class MainActivity extends BaseActivity {
         // 0 = AudioManager.ADJUST_SAME
         // 100 = AudioManager.ADJUST_UNMUTE
         final int flag = AudioManager.FLAG_SHOW_UI
+                //| AudioManager.FLAG_ALLOW_RINGER_MODES // It lost mute volume
                 | AudioManager.FLAG_PLAY_SOUND
                 | AudioManager.FLAG_VIBRATE;
 
