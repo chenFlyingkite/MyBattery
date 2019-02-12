@@ -106,8 +106,6 @@
 
                         <TextView
                             style="@style/baseText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:text="@string/time"/>
 
                         <EditText
@@ -257,6 +255,29 @@
                     style="@style/mainText.smaller.table"
                     tools:text="@string/ratio"/>
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                style="@style/baseText"
+                android:text="@string/audioManager"/>
+
+            <TextView
+                android:id="@+id/musicMinus"
+                style="@style/grayButton.smaller"
+                android:layout_width="@dimen/t100dp"
+                android:textColor="@color/textRed"
+                android:text="-1"/>
+
+            <TextView
+                android:id="@+id/musicAdd"
+                style="@style/grayButton.smaller"
+                android:layout_width="@dimen/t100dp"
+                android:textColor="@color/textGreen"
+                android:text="+1"/>
         </LinearLayout>
 
         <View style="@style/separator"/>

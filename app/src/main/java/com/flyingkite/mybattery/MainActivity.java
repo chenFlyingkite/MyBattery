@@ -140,6 +140,15 @@ public class MainActivity extends BaseActivity {
         ringer = findViewById(R.id.audioRingerIcon);
         musicMode = findViewById(R.id.audioMusic);
         ringerMode = findViewById(R.id.audioRinger);
+        findViewById(R.id.musicAdd).setOnClickListener((v) -> {
+            adjustStreamVolume(1);
+            showAudioState();
+        });
+        findViewById(R.id.musicMinus).setOnClickListener((v) -> {
+            adjustStreamVolume(-1);
+            showAudioState();
+        });
+
         final AudioManager am = audioManager;
 
         showAudioState();
@@ -147,9 +156,6 @@ public class MainActivity extends BaseActivity {
             if (am == null) return;
 
             final int mode = am.getRingerMode();
-            final int flag = AudioManager.FLAG_SHOW_UI
-                    | AudioManager.FLAG_PLAY_SOUND
-                    | AudioManager.FLAG_VIBRATE;
 
             int nextMode = mode;
             // -100 = AudioManager.ADJUST_MUTE
@@ -162,25 +168,40 @@ public class MainActivity extends BaseActivity {
                 direction = -100;
             } else {
                 nextMode = AudioManager.RINGER_MODE_NORMAL;
+                direction = 100;
                 if (mode == AudioManager.RINGER_MODE_SILENT) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         // From N onward, ringer mode adjustments that would toggle Do Not Disturb are not allowed
                         // unless the app has been granted Do Not Disturb Access.
                         // See AudioManager#setRingerMode()
                         nextMode = mode;
+                        direction = 0;
                     }
                 }
             }
 
             am.setRingerMode(nextMode);
-            am.adjustStreamVolume(AM_MUSIC, direction, flag);
+            adjustStreamVolume(direction);
 
             showAudioState();
         });
     }
 
+    private void adjustStreamVolume(int direction) {
+        final AudioManager am = audioManager;
+        if (am == null) return;
+        // -100 = AudioManager.ADJUST_MUTE
+        // 0 = AudioManager.ADJUST_SAME
+        // 100 = AudioManager.ADJUST_UNMUTE
+        final int flag = AudioManager.FLAG_SHOW_UI
+                | AudioManager.FLAG_PLAY_SOUND
+                | AudioManager.FLAG_VIBRATE;
+
+        am.adjustStreamVolume(AM_MUSIC, direction, flag);
+    }
+
     private void showAudioState() {
-        AudioManager am = audioManager;
+        final AudioManager am = audioManager;
 
         if (am == null) {
             musicMode.setText(R.string.na);
