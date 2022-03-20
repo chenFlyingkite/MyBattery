@@ -24,13 +24,16 @@ public class ScreenService extends BaseService {
     public static final String EXTRA_OPEN_SCREEN = "EXTRA_OPEN_SCREEN";
     public static final String EXTRA_CLOSE_SCREEN = "EXTRA_CLOSE_SCREEN";
     public static final String EXTRA_PARAM_INERTIA = "EXTRA_PARAM_INERTIA";
+    public static final String EXTRA_COMMAND_STICKY = "EXTRA_COMMAND_STICKY";
     private ProximitySensor proximity;
     private PowerManager powerMgr;
     private KeyguardManager keyguardMgr;
     private DevicePolicyManager policyMgr;
 
-    private boolean enableOpen;
-    private boolean enableClose;
+    // from extra
+    private boolean enableOpen = false;
+    private boolean enableClose = false;
+    private boolean commandSticky = false;
     // We will perform lock/unlock when proximity sensor events
     // Receive >= [inertia] events within [time] millisecond
     // Parameters
@@ -61,8 +64,9 @@ public class ScreenService extends BaseService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         proximity.register();
         if (intent != null) {
-            enableOpen = intent.getBooleanExtra(EXTRA_OPEN_SCREEN, false);
-            enableClose = intent.getBooleanExtra(EXTRA_CLOSE_SCREEN, false);
+            enableOpen = intent.getBooleanExtra(EXTRA_OPEN_SCREEN, enableOpen);
+            enableClose = intent.getBooleanExtra(EXTRA_CLOSE_SCREEN, enableClose);
+            commandSticky = intent.getBooleanExtra(EXTRA_COMMAND_STICKY, commandSticky);
             int in = intent.getIntExtra(EXTRA_PARAM_INERTIA, _inertia);
             int ti = intent.getIntExtra(EXTRA_PARAM_TIME, _time);
             inertia = in > 0 ? in : _inertia;
@@ -71,7 +75,11 @@ public class ScreenService extends BaseService {
         logV("onStartCommand, open = %s, close = %s", enableOpen, enableClose);
         logV("inertia = %s, time = %s", inertia, time);
         // If we get killed, after returning from here, NO NEED restart
-        return START_NOT_STICKY;
+        if (commandSticky) {
+            return START_STICKY;
+        } else {
+            return START_NOT_STICKY;
+        }
     }
 
     @Override

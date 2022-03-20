@@ -32,9 +32,11 @@ public class MainActivity extends BaseActivity {
     // Views
     private CheckBox openScreen;
     private CheckBox closeScreen;
+    private CheckBox screenSticky;
     private TextView musicMode;
     private TextView ringerMode;
     private ImageView ringer;
+    private TextView mySensorNow;
 
     // Components
     private AudioManager audioManager;
@@ -112,6 +114,8 @@ public class MainActivity extends BaseActivity {
     private void initScreen() {
         openScreen = findViewById(R.id.myScreenOn);
         closeScreen = findViewById(R.id.myScreenOff);
+        screenSticky = findViewById(R.id.screenSticky);
+        mySensorNow = findViewById(R.id.mySensorNow);
         final SensorManager sm = sensorManager;
         int proxi = 0;
         if (sm != null) {
@@ -121,6 +125,7 @@ public class MainActivity extends BaseActivity {
         if (proxi == 0) {
             findViewById(R.id.mySensorNotFound).setVisibility(View.VISIBLE);
             findViewById(R.id.myScreenPanel).setVisibility(View.GONE);
+            mySensorNow.setVisibility(View.GONE);
             return;
         }
 
@@ -286,15 +291,16 @@ public class MainActivity extends BaseActivity {
     }
 
     private void makeScreen() {
-        makeScreenService(openScreen.isChecked(), closeScreen.isChecked());
+        makeScreenService(openScreen.isChecked(), closeScreen.isChecked(), screenSticky.isChecked());
     }
 
-    private void makeScreenService(boolean open, boolean close) {
+    private void makeScreenService(boolean open, boolean close, boolean sticky) {
         Intent it = new Intent(MainActivity.this, ScreenService.class);
         if (open || close) {
-            LogI("start Service : ScreenService : %s %s", ox(open), ox(close));
+            LogI("start Service : ScreenService : %s %s, sticky = %s", ox(open), ox(close), ox((sticky)));
             it.putExtra(ScreenService.EXTRA_OPEN_SCREEN, open);
             it.putExtra(ScreenService.EXTRA_CLOSE_SCREEN, close);
+            it.putExtra(ScreenService.EXTRA_CLOSE_SCREEN, sticky);
             it.putExtra(ScreenService.EXTRA_PARAM_TIME, time);
             it.putExtra(ScreenService.EXTRA_PARAM_INERTIA, inertia);
             startService(it);

@@ -28,6 +28,7 @@
 
     <!-- Screen service -->
     <string name="screen">螢幕</string>
+    <string name="proximityValue">接近感應器 %s</string>
     <string name="proximityNotFound">找不到接近感應器 Proximity sensor</string>
     <string name="proximityDetail">使用接近感應 Proximity (需同時開啟電池服務)</string>
     <string name="openScreen">[Open] [開啟] 螢幕</string>
@@ -50,4 +51,5 @@
     <!-- Screen lock parameters -->
     <string name="time">時間 (ms)</string>
     <string name="inertia">變換次數</string>
+    <string name=""
 </resources>
