@@ -51,5 +51,4 @@
     <!-- Screen lock parameters -->
     <string name="time">時間 (ms)</string>
     <string name="inertia">變換次數</string>
-    <string name=""
 </resources>

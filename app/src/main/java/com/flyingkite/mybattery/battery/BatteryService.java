@@ -10,8 +10,8 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
+import androidx.core.app.NotificationCompat;
 
 import com.flyingkite.mybattery.BaseService;
 import com.flyingkite.mybattery.MainActivity;
@@ -103,7 +103,6 @@ public class BatteryService extends BaseService {
         rv.setTextViewText(R.id.notifVoltage, getString(R.string.notificationVoltage, vol * 1F));
         rv.setTextViewText(R.id.notifCurrent, getString(R.string.notificationCurrent, uA_now * 0.001F));
 
-
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_thumb_up_white_48dp)
                 //.setSmallIcon(R.mipmap.ic_launcher)
@@ -133,7 +132,11 @@ public class BatteryService extends BaseService {
 
     private PendingIntent getSetIntent() {
         Intent it = new Intent(this, MainActivity.class);
-        return PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_UPDATE_CURRENT);
+        int f = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            f |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        return PendingIntent.getActivity(this, 0, it, f);
     }
 
     @Override

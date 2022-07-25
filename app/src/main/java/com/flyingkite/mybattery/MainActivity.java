@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.StringRes;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.StringRes;
 
 import com.flyingkite.mybattery.battery.BatteryService;
 import com.flyingkite.mybattery.lockscreen.LockAdmin;
@@ -23,6 +25,7 @@ import com.flyingkite.mybattery.lockscreen.ScreenService;
 import com.flyingkite.util.FilesHelper;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class MainActivity extends BaseActivity {
     // static fields
@@ -64,6 +67,58 @@ public class MainActivity extends BaseActivity {
             closeScreen.setChecked(false);
         }
         showAudioState();
+        //enable(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //enable(false);
+    }
+
+//    private void enable(boolean b) {
+//        Context ctx = MainActivity.this;
+//        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(ctx);
+//        LogE("nfcAdapter %s", nfcAdapter);
+//        if (nfcAdapter != null) {
+//            LogE("enable %s", b);
+//            if (b) {
+//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                //intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                PendingIntent nfcPI = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, 0);
+//                IntentFilter[] filters = new IntentFilter[1];
+//                filters[0] = new IntentFilter();
+//                //filters[0].addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
+//                filters[0].addAction(NfcAdapter.ACTION_TAG_DISCOVERED);
+//                filters[0].addCategory(Intent.CATEGORY_DEFAULT);
+//                String[][] techLists = {{
+//                    IsoDep.class.getName(),
+//                    NfcA.class.getName(),
+//                    NfcB.class.getName(),
+//                    NfcF.class.getName(),
+//                    NfcV.class.getName(),
+//                    Ndef.class.getName(),
+//                    NdefFormatable.class.getName(),
+//                    MifareClassic.class.getName(),
+//                    MifareUltralight.class.getName(),
+//                }};
+//                techLists = new String[][]{};
+//                nfcAdapter.enableForegroundDispatch(this, nfcPI, filters, techLists);
+//            } else {
+//                nfcAdapter.disableForegroundDispatch(this);
+//            }
+//        }
+//    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        LogE("intent = %s", intent);
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            //NdefMessage[] ndef = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            LogE("tag, id = %s, tech = %s", Arrays.toString(tag.getId()), Arrays.toString(tag.getTechList()));
+        }
     }
 
     @Override

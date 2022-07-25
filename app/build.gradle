@@ -1,11 +1,9 @@
 apply plugin: 'com.android.application'
 
-def libraryVersion = "28.0.0"
-def googlePlayVersion = "9.8.0"
-
 task MyBuildInfo {
-    ext.versionCode = 7
-    ext.versionName = "1.0.0.7"
+    int code = 8
+    ext.versionCode = code
+    ext.versionName = "1.0.0.$code"
     ext.APK_NAME = "MyBattery-${versionName}.apk"
 }
 
@@ -18,12 +16,12 @@ android {
             storePassword 'MyAndroid'
         }
     }
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 33
+    buildToolsVersion "31.0.0"
     defaultConfig {
         applicationId "com.flyingkite.mybattery"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode MyBuildInfo.versionCode
         versionName MyBuildInfo.versionName
     }
@@ -49,24 +47,19 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     project.gradle.addListener(new TaskTicTac())
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:$libraryVersion"
-    //implementation "com.android.support:design:$libraryVersion"
-    //implementation "com.android.support:percent:$libraryVersion"
-    //implementation "com.android.support:recyclerview-v7:$libraryVersion"
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api "androidx.multidex:multidex:2.0.1"
+    api "androidx.appcompat:appcompat:1.4.1"
 
-    def supportLibVersion = "27.1.1"
-    //implementation "com.android.support:support-compat:$supportLibVersion"
     //implementation 'com.github.chenFlyingkite:MyAndroid:0.0.3'
-    //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
 
 

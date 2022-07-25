@@ -6,6 +6,7 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.NFC" />
 
     <application
         android:icon="@mipmap/icon_app"
@@ -14,26 +15,41 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".SplashActivity">
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
-                  android:launchMode="singleTask"/>
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+<!--                <action android:name="android.nfc.action.TECH_DISCOVERED"/>-->
+                <action android:name="android.nfc.action.TAG_DISCOVERED"/>
+            </intent-filter>
+<!--            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"-->
+<!--                android:resource="@xml/nfc_tech_filter" />-->
+        </activity>
 
         <service android:name=".battery.BatteryService"/>
         <receiver android:name=".battery.SimpleReceiver"/>
         <service android:name=".lockscreen.ScreenService"/>
 
-        <receiver android:name=".lockscreen.LockAdmin"
-                  android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <meta-data android:name="android.app.device_admin"
-                       android:resource="@xml/lock_admin" />
+        <receiver
+            android:name=".lockscreen.LockAdmin"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/lock_admin" />
             <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action
+                    android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
     </application>
